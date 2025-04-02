@@ -1,0 +1,22 @@
+name: Code Review
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install Backend Dependencies
+        run: cd backend && npm install
+      - name: Run Mock Review
+        run: cd backend && node src/index.js &
+      - name: Simulate Review
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{"code":"console.log(1);","language":"javascript"}' http://localhost:5000/api/review

@@ -1,23 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import CodeEditor from './components/CodeEditor';
+import ReviewPanel from './components/ReviewPanel';
+import VoiceInput from './components/VoiceInput';
+import { Button } from '@mui/material';
+import { reviewCode, debugCode } from './api';
 
 function App() {
+  const [code, setCode] = useState('');
+  const [language, setLanguage] = useState('javascript');
+  const [review, setReview] = useState(null);
+  const [debug, setDebug] = useState(null);
+
+  const handleReview = async () => {
+    const result = await reviewCode(code, language);
+    setReview(result);
+    setDebug(null);
+  };
+
+  const handleDebug = async () => {
+    const result = await debugCode(code, language);
+    setDebug(result);
+    setReview(null);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>CodeWhisper AI</h1>
+      <CodeEditor code={code} setCode={setCode} language={language} setLanguage={setLanguage} />
+      <div className="controls">
+        <Button variant="contained" onClick={handleReview}>Review Code</Button>
+        <Button variant="contained" onClick={handleDebug}>Debug Code</Button>
+        <VoiceInput setCode={setCode} />
+      </div>
+      <ReviewPanel review={review} debug={debug} />
     </div>
   );
 }
